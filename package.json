@@ -1,0 +1,39 @@
+{
+  "name": "auth",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "Nitesh Singhal",
+  "type": "commonjs",
+  "main": "index.ts",
+  "scripts": {
+    "lint": "eslint --fix --ext .ts ./src ./index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./dist/index.js",
+    "watch": "nodemon index.ts --config nodemon.json",
+    "build": "tsc",
+    "prepare": "husky",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.5",
+    "@types/joi": "^17.2.2",
+    "@types/mongoose": "^5.11.96",
+    "@types/morgan": "^1.9.10",
+    "husky": "^9.1.7",
+    "nodemon": "^3.1.11",
+    "prettier": "^3.6.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.47.0"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "joi": "^18.0.1",
+    "mongoose": "^8.20.0",
+    "morgan": "^1.10.1"
+  }
+}

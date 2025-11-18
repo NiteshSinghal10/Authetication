@@ -1,0 +1,2 @@
+# Build the project to ensure it compiles
+npm run build

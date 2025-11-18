@@ -1,0 +1,5 @@
+# Code Format
+npm run format
+
+# Run linting¯
+npm run lint
