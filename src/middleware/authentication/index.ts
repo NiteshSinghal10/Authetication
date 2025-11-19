@@ -1,6 +1,6 @@
-import joi from "joi";
-import { Request, Response, NextFunction } from "express";
-import { sendResponse } from "../../lib";
+import joi from 'joi';
+import { Request, Response, NextFunction } from 'express';
+import { sendResponse } from '../../lib';
 
 export const validateTokenExchange = (
   req: Request,
