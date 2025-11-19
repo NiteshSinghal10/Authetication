@@ -4,8 +4,8 @@
   "description": "",
   "license": "ISC",
   "author": "Nitesh Singhal",
-  "type": "module",
-  "main": "index.ts",
+  "type": "commonjs",
+  "main": "index.js",
   "scripts": {
     "lint": "eslint --fix --ext .ts ./src ./index.ts",
     "test": "echo \"Error: no test specified\" && exit 1",

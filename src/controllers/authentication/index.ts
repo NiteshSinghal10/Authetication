@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router } from "express";
 
 import {
   GOOGLE_CLIENT_ID,
@@ -8,12 +8,12 @@ import {
   RESPONSE_MESSAGES,
   sendResponse,
   callOtherService,
-} from '../../lib';
-import { validateTokenExchange } from '../../middleware';
+} from "../../lib";
+import { validateTokenExchange } from "../../middleware";
 
 const router = Router();
 
-router.get('/', validateTokenExchange, async (req, res) => {
+router.get("/", validateTokenExchange, async (req, res) => {
   try {
     const { code } = req.query;
 
@@ -22,16 +22,16 @@ router.get('/', validateTokenExchange, async (req, res) => {
       client_id: GOOGLE_CLIENT_ID,
       client_secret: GOOGLE_CLIENT_SECRET,
       redirect_uri: GOOGLE_REDIRECT_URL,
-      grant_type: 'authorization_code',
+      grant_type: "authorization_code",
     };
 
     const googleResponse = await callOtherService(
       GOOGLE_CODE_EXCHANGE_API,
-      'POST',
+      "POST",
       data,
       {
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+          "Content-Type": "application/x-www-form-urlencoded",
         },
       },
     );
