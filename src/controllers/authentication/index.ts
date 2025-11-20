@@ -15,11 +15,7 @@ import {
   encrypt,
 } from '../../lib';
 import { validateTokenExchange } from '../../middleware';
-import {
-  getSession,
-  updateUser,
-  createSession,
-} from '../../services';
+import { getSession, updateUser, createSession } from '../../services';
 import { IUser } from '../../interfaces';
 
 const router = Router();
