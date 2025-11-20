@@ -43,8 +43,8 @@ const schema = new Schema(
     createdAt: {
       type: Date,
       default: Date.now,
-      expires: 60 * 60 * 24 * REFRESH_TOKEN_EXPIRED_IN
-    }
+      expires: 60 * 60 * 24 * REFRESH_TOKEN_EXPIRED_IN,
+    },
   },
   { timestamps: true },
 );
