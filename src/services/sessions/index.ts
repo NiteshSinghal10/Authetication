@@ -8,14 +8,14 @@ export const createSession = (data: object) =>
 
 export const getSession = (
   search: object,
-  projection: object,
-  options: object,
-  populate: IPopulate[],
+  projection?: object,
+  options?: object,
+  populate?: IPopulate[],
 ) =>
   new Promise((resolve, reject) => {
     const query = SESSION.findOne(search, projection, options);
 
-    if (populate.length) {
+    if (populate && populate.length) {
       populate.forEach((pop) => query.populate(pop));
     }
 

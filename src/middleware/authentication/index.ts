@@ -1,6 +1,6 @@
 import joi from 'joi';
 import { Request, Response, NextFunction } from 'express';
-import { sendResponse } from '../../lib';
+import { DEVICE_TYPE, sendResponse } from '../../lib';
 
 export const validateTokenExchange = (
   req: Request,
@@ -9,7 +9,12 @@ export const validateTokenExchange = (
 ) => {
   const { error } = joi
     .object({
-      code: joi.string(),
+      code: joi.string().required(),
+      aud: joi.string().required(),
+      deviceType: joi
+        .string()
+        .valid(...DEVICE_TYPE)
+        .required(),
     })
     .validate(req.query);
 

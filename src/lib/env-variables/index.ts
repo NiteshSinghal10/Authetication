@@ -13,3 +13,9 @@ export const GOOGLE_REDIRECT_URL = process.env.GOOGLE_REDIRECT_URL;
 export const GOOGLE_CODE_EXCHANGE_API = String(
   process.env.GOOGLE_CODE_EXCHANGE_API,
 );
+export const PRIVATE_KEY = String(process.env.PRIVATE_KEY);
+export const PUBLIC_KEY = String(process.env.PUBLIC_KEY);
+
+// Crypto encryption
+export const ENCRYPTION_KEY = String(process.env.ENCRYPTION_KEY);
+export const ALGORITHM = String(process.env.ALGORITHM);

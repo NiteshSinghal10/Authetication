@@ -4,6 +4,6 @@ import { authController } from '../controllers';
 
 const router = Router();
 
-router.use('/auth/token', authController);
+router.use('/auth', authController);
 
 export default router;

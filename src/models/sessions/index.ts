@@ -30,10 +30,7 @@ const schema = new Schema(
     userAgent: {
       type: String,
     },
-    refreshTokenHash: {
-      type: String,
-    },
-    accessTokenHash: {
+    encryptedRefreshToken: {
       type: String,
     },
     revoked: {
