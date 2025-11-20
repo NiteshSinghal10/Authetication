@@ -13,6 +13,11 @@ const schema = new Schema(
       type: String,
       required: true,
     },
+    status: {
+      type: String,
+      enum: ['ACTIVE', 'INACTIVE', 'DELETED'],
+      default: 'ACTIVE'
+    }
   },
   { timestamps: true },
 );

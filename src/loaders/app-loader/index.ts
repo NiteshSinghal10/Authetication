@@ -1,6 +1,7 @@
 import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 
 import { PORT } from '../../lib';
 import router from '../../router';
@@ -18,6 +19,8 @@ export const appLoader = () => {
       credentials: true,
     }),
   );
+  
+  app.use(cookieParser());
 
   app.use(morgan('dev'));
 

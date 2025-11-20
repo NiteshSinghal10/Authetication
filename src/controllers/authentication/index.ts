@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { CookieOptions, Router } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { OAuth2Client } from 'google-auth-library';
 
@@ -61,6 +61,7 @@ router.get('/sign-in', validateTokenExchange, async (req, res) => {
 
     // Step 3: Generate Access
     const uuid = uuidv4();
+    
     const deviceId = req.cookies?.deviceId ? req.cookies.deviceId : uuidv4();
 
     const payload = {
@@ -98,8 +99,13 @@ router.get('/sign-in', validateTokenExchange, async (req, res) => {
     }
 
     // Step 5: Set access token & device Id in cookie.
-    res.cookie('accessToken', accessToken);
-    res.cookie('deviceId', deviceId);
+    const cookieOptions: CookieOptions = {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict'
+    };
+    res.cookie('accessToken', accessToken, cookieOptions);
+    res.cookie('deviceId', deviceId, cookieOptions);
 
     return sendResponse(
       res,

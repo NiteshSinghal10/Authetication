@@ -11,17 +11,7 @@ export function getDeviceInfo(req: Request) {
 
   const deviceName = device.model || os.name || 'Unknown Device';
   const userAgent = req.headers['user-agent'] || 'Unknown UA';
-
-  // Handle string | string[] for x-forwarded-for
-  let ipAddress = req.connection.remoteAddress || 'Unknown IP';
-  const xForwardedFor = req.headers['x-forwarded-for'];
-  if (xForwardedFor) {
-    if (typeof xForwardedFor === 'string') {
-      ipAddress = xForwardedFor.split(',')[0].trim();
-    } else if (Array.isArray(xForwardedFor)) {
-      ipAddress = xForwardedFor[0].split(',')[0].trim();
-    }
-  }
+  let ipAddress = req.ip || 'Unknown IP';
 
   return { deviceName, userAgent, ipAddress };
 }
