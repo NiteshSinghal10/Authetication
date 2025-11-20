@@ -19,7 +19,7 @@ export const appLoader = () => {
       credentials: true,
     }),
   );
-  
+
   app.use(cookieParser());
 
   app.use(morgan('dev'));

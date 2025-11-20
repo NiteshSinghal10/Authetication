@@ -11,7 +11,7 @@ export function getDeviceInfo(req: Request) {
 
   const deviceName = device.model || os.name || 'Unknown Device';
   const userAgent = req.headers['user-agent'] || 'Unknown UA';
-  let ipAddress = req.ip || 'Unknown IP';
+  const ipAddress = req.ip || 'Unknown IP';
 
   return { deviceName, userAgent, ipAddress };
 }

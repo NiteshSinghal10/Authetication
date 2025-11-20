@@ -61,7 +61,7 @@ router.get('/sign-in', validateTokenExchange, async (req, res) => {
 
     // Step 3: Generate Access
     const uuid = uuidv4();
-    
+
     const deviceId = req.cookies?.deviceId ? req.cookies.deviceId : uuidv4();
 
     const payload = {
@@ -102,7 +102,7 @@ router.get('/sign-in', validateTokenExchange, async (req, res) => {
     const cookieOptions: CookieOptions = {
       httpOnly: true,
       secure: true,
-      sameSite: 'strict'
+      sameSite: 'strict',
     };
     res.cookie('accessToken', accessToken, cookieOptions);
     res.cookie('deviceId', deviceId, cookieOptions);

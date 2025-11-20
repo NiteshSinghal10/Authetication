@@ -16,8 +16,8 @@ const schema = new Schema(
     status: {
       type: String,
       enum: ['ACTIVE', 'INACTIVE', 'DELETED'],
-      default: 'ACTIVE'
-    }
+      default: 'ACTIVE',
+    },
   },
   { timestamps: true },
 );
