@@ -13,6 +13,8 @@ import {
   generateToken,
   getDeviceInfo,
   encrypt,
+  REFRESH_TOKEN_EXPIRED_IN,
+  ACCESS_TOKEN_EXPIRED_IN,
 } from '../../lib';
 import { validateTokenExchange } from '../../middleware';
 import { getSession, updateUser, createSession } from '../../services';
@@ -73,7 +75,7 @@ router.get('/sign-in', validateTokenExchange, async (req, res) => {
     };
 
     const accessToken = generateToken({ ...payload, aud }, 'access', {
-      expiresIn: '15m',
+      expiresIn: `${ACCESS_TOKEN_EXPIRED_IN}d`,
     });
 
     // Step 4: create a login Session if doesn't exists.
@@ -81,7 +83,7 @@ router.get('/sign-in', validateTokenExchange, async (req, res) => {
 
     if (!isSessionExists) {
       const refreshToken = generateToken(payload, 'refresh', {
-        expiresIn: '15m',
+        expiresIn: `${REFRESH_TOKEN_EXPIRED_IN}d`,
       });
       const { deviceName, userAgent, ipAddress } = getDeviceInfo(req);
       const encryptedRefreshToken = encrypt(refreshToken);

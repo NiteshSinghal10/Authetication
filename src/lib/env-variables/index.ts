@@ -19,3 +19,6 @@ export const PUBLIC_KEY = String(process.env.PUBLIC_KEY);
 // Crypto encryption
 export const ENCRYPTION_KEY = String(process.env.ENCRYPTION_KEY);
 export const ALGORITHM = String(process.env.ALGORITHM);
+
+export const REFRESH_TOKEN_EXPIRED_IN = Number(process.env.REFRESH_TOKEN_EXPIRED_IN);
+export const ACCESS_TOKEN_EXPIRED_IN = Number(process.env.ACCESS_TOKEN_EXPIRED_IN);
