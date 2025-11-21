@@ -132,7 +132,7 @@ router.get('/token', validateTokenExchange, async (req, res) => {
         deviceType,
         deviceName,
         ipAddress,
-        userAgent
+        userAgent,
       });
     }
 
