@@ -17,8 +17,8 @@ import {
   GOOGLE_PEOPLE_API,
 } from '../../lib';
 import { validateTokenExchange } from '../../middleware';
-import { getSession, updateUser, createSession } from '../../services';
-import { IGooglePeople, IUser } from '../../interfaces';
+import { getSession, updateUser, createSession, deleteSession } from '../../services';
+import { IGooglePeople, ISession, IUser } from '../../interfaces';
 
 const router = Router();
 
@@ -100,14 +100,19 @@ router.get('/token', validateTokenExchange, async (req, res) => {
     });
 
     // Step 4: create a login Session if doesn't exists.
-    const isSessionExists = await getSession({ deviceId });
+    const isSessionExists = await getSession({ deviceId }) as ISession;
 
-    if (!isSessionExists) {
+    // Makesure one session exists for one device one user.
+    if (!isSessionExists || (isSessionExists && String(isSessionExists._user) !== String(user._id))) {
       const refreshToken = generateToken(payload, 'refresh', {
         expiresIn: `${REFRESH_TOKEN_EXPIRED_IN}d`,
       });
       const { deviceName, userAgent, ipAddress } = getDeviceInfo(req);
       const encryptedRefreshToken = encrypt(refreshToken);
+
+      if((isSessionExists && String(isSessionExists._user) !== String(user._id))) {
+        await deleteSession({ _id: isSessionExists._id });
+      }
 
       await createSession({
         deviceId,

@@ -52,4 +52,6 @@ const schema = new Schema(
   { timestamps: true },
 );
 
+schema.index({ deviceId: 1, _user: 1 }, { unique: true });
+
 export const SESSION = model('session', schema);
