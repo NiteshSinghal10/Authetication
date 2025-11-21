@@ -53,6 +53,7 @@ router.get('/token', validateTokenExchange, async (req, res) => {
       {
         headers: {
           Authorization: `Bearer ${googleResponse.access_token}`,
+          'Content-Type': 'application/x-www-form-urlencoded',
         },
       },
     );
@@ -89,7 +90,7 @@ router.get('/token', validateTokenExchange, async (req, res) => {
     const payload = {
       issuer: 'accounts.vibely.com',
       sub: user._id,
-      name: user.name,
+      name: `${user.firstName} ${user.lastName}`,
       email: user.email,
       uuid,
     };
