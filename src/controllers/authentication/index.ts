@@ -11,7 +11,6 @@ import {
   callOtherService,
   generateToken,
   getDeviceInfo,
-  encrypt,
   REFRESH_TOKEN_EXPIRED_IN,
   ACCESS_TOKEN_EXPIRED_IN,
   GOOGLE_PEOPLE_API,
@@ -103,6 +102,7 @@ router.get('/token', validateTokenExchange, async (req, res) => {
     const accessToken = generateToken({ ...payload, aud }, 'access', {
       expiresIn: `${ACCESS_TOKEN_EXPIRED_IN}d`,
     });
+    let refreshToken = req.cookies?.refreshToken;
 
     // Step 4: create a login Session if doesn't exists.
     const isSessionExists = (await getSession({ deviceId })) as ISession;
@@ -112,11 +112,11 @@ router.get('/token', validateTokenExchange, async (req, res) => {
       !isSessionExists ||
       (isSessionExists && String(isSessionExists._user) !== String(user._id))
     ) {
-      const refreshToken = generateToken(payload, 'refresh', {
+      const { deviceName, userAgent, ipAddress } = getDeviceInfo(req);
+
+      refreshToken = generateToken(payload, 'refresh', {
         expiresIn: `${REFRESH_TOKEN_EXPIRED_IN}d`,
       });
-      const { deviceName, userAgent, ipAddress } = getDeviceInfo(req);
-      const encryptedRefreshToken = encrypt(refreshToken);
 
       if (
         isSessionExists &&
@@ -132,8 +132,7 @@ router.get('/token', validateTokenExchange, async (req, res) => {
         deviceType,
         deviceName,
         ipAddress,
-        userAgent,
-        encryptedRefreshToken,
+        userAgent
       });
     }
 
@@ -144,6 +143,7 @@ router.get('/token', validateTokenExchange, async (req, res) => {
       sameSite: 'strict',
     };
     res.cookie('accessToken', accessToken, cookieOptions);
+    res.cookie('refreshToken', refreshToken, cookieOptions);
     res.cookie('deviceId', deviceId, cookieOptions);
 
     return sendResponse(

@@ -32,10 +32,6 @@ const schema = new Schema(
       type: String,
       required: true,
     },
-    encryptedRefreshToken: {
-      type: String,
-      required: true,
-    },
     revoked: {
       type: Boolean,
       default: false,

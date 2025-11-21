@@ -7,7 +7,6 @@ export interface ISession {
   ipAddress: string;
   deviceId: string;
   userAgent: string;
-  encryptedRefreshToken: string;
   revoked: boolean;
   revokedAt: Date;
 }
