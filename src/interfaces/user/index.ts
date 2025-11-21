@@ -8,7 +8,7 @@ export interface IUser {
     year: number;
     month: number;
     day: number;
-  },
+  };
   gender?: string;
 }
 
