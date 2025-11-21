@@ -58,8 +58,7 @@ export const updateSessions = (
     SESSION.updateMany(search, update, options).then(resolve).catch(reject),
   );
 
-export const deleteSession = (search: object) => new Promise((resolve, reject) =>
-  SESSION.findOneAndDelete(search)
-    .then(resolve)
-    .catch(reject)
-)
+export const deleteSession = (search: object) =>
+  new Promise((resolve, reject) =>
+    SESSION.findOneAndDelete(search).then(resolve).catch(reject),
+  );

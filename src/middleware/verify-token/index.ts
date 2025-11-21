@@ -20,7 +20,10 @@ export const verifyToken = async (
 
     req.user = payload;
 
-    const session = (await getSession({ uuid: payload.uuid, _user: payload.sub })) as ISession;
+    const session = (await getSession({
+      uuid: payload.uuid,
+      _user: payload.sub,
+    })) as ISession;
 
     if (!session) {
       throw new Error(RESPONSE_MESSAGES.en.session_not_found);
