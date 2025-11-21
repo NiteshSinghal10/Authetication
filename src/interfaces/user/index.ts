@@ -4,3 +4,11 @@ export interface IUser {
   email: string;
   picture?: string;
 }
+
+export interface ITokenPayload {
+  issuer: string;
+  sub: string;
+  name: string;
+  email: string;
+  uuid: string;
+}

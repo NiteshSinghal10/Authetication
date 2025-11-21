@@ -26,12 +26,15 @@ const schema = new Schema(
     },
     deviceId: {
       type: String,
+      required: true,
     },
     userAgent: {
       type: String,
+      required: true,
     },
     encryptedRefreshToken: {
       type: String,
+      required: true,
     },
     revoked: {
       type: Boolean,

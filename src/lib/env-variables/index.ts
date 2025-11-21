@@ -13,6 +13,9 @@ export const GOOGLE_REDIRECT_URL = process.env.GOOGLE_REDIRECT_URL;
 export const GOOGLE_CODE_EXCHANGE_API = String(
   process.env.GOOGLE_CODE_EXCHANGE_API,
 );
+export const GOOGLE_PEOPLE_API = String(process.env.GOOGLE_PEOPLE_API);
+
+// Private and public keys
 export const PRIVATE_KEY = String(process.env.PRIVATE_KEY);
 export const PUBLIC_KEY = String(process.env.PUBLIC_KEY);
 

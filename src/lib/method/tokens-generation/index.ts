@@ -1,6 +1,6 @@
 import jwt, { SignOptions } from 'jsonwebtoken';
 
-import { PRIVATE_KEY } from '../../../lib';
+import { PRIVATE_KEY, PUBLIC_KEY } from '../../../lib';
 
 export const generateToken = (
   data: object,
@@ -18,4 +18,9 @@ export const generateToken = (
   });
 
   return token;
+};
+
+export const validateToken = (token: string) => {
+  const response = jwt.verify(token, PUBLIC_KEY);
+  return response;
 };

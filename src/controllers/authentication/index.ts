@@ -1,6 +1,5 @@
 import { CookieOptions, Router } from 'express';
 import { v4 as uuidv4 } from 'uuid';
-import { OAuth2Client } from 'google-auth-library';
 
 import {
   GOOGLE_CLIENT_ID,
@@ -15,16 +14,15 @@ import {
   encrypt,
   REFRESH_TOKEN_EXPIRED_IN,
   ACCESS_TOKEN_EXPIRED_IN,
+  GOOGLE_PEOPLE_API,
 } from '../../lib';
 import { validateTokenExchange } from '../../middleware';
 import { getSession, updateUser, createSession } from '../../services';
-import { IUser } from '../../interfaces';
+import { IGooglePeople, IUser } from '../../interfaces';
 
 const router = Router();
 
-const client = new OAuth2Client(GOOGLE_CLIENT_ID);
-
-router.get('/sign-in', validateTokenExchange, async (req, res) => {
+router.get('/token', validateTokenExchange, async (req, res) => {
   try {
     const { code, aud, deviceType } = req.query;
 
@@ -36,7 +34,7 @@ router.get('/sign-in', validateTokenExchange, async (req, res) => {
       grant_type: 'authorization_code',
     };
 
-    const googleResponse = await callOtherService<{ id_token: string }>(
+    const googleResponse = await callOtherService<{ access_token: string }>(
       GOOGLE_CODE_EXCHANGE_API,
       'POST',
       data,
@@ -47,19 +45,41 @@ router.get('/sign-in', validateTokenExchange, async (req, res) => {
       },
     );
 
-    // Step 1: Extract Google User info
-    const googleResult = await client.verifyIdToken({
-      idToken: googleResponse.id_token,
-      audience: GOOGLE_CLIENT_ID,
-    });
-    const userInfo = googleResult.getPayload();
+    // Step 1: Extract Google User info, gender & birthday
+    const googleResult = await callOtherService<IGooglePeople>(
+      `${GOOGLE_PEOPLE_API}?personFields=names,emailAddresses,photos,birthdays,genders,phoneNumbers`,
+      'GET',
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${googleResponse.access_token}`,
+        },
+      },
+    );
+
+    const userInfo = {
+      firstName: googleResult.names?.find((obj) => obj.metadata.primary)
+        ?.givenName,
+      lastName: googleResult.names?.find((obj) => obj.metadata.primary)
+        ?.familyName,
+      picture: googleResult.photos?.find((obj) => obj.metadata.primary)?.url,
+      email: googleResult.emailAddresses?.find((obj) => obj.metadata.primary)
+        ?.value,
+      gender: googleResult.genders?.find((obj) => obj.metadata.primary)?.value,
+      dob: {
+        year: googleResult.birthdays?.find((obj) => obj.metadata.primary)?.date
+          .year,
+        month: googleResult.birthdays?.find((obj) => obj.metadata.primary)?.date
+          .month,
+        day: googleResult.birthdays?.find((obj) => obj.metadata.primary)?.date
+          .day,
+      },
+    };
 
     // Step 2: Upsert User
-    const user = (await updateUser(
-      { email: userInfo?.email },
-      { name: userInfo?.name, picture: userInfo?.picture },
-      { upsert: true },
-    )) as IUser;
+    const user = (await updateUser({ email: userInfo?.email }, userInfo, {
+      upsert: true,
+    })) as IUser;
 
     // Step 3: Generate Access
     const uuid = uuidv4();
@@ -100,7 +120,7 @@ router.get('/sign-in', validateTokenExchange, async (req, res) => {
       });
     }
 
-    // Step 5: Set access token & device Id in cookie.
+    // Step 5: Set access token & deviceIdin cookie.
     const cookieOptions: CookieOptions = {
       httpOnly: true,
       secure: true,
