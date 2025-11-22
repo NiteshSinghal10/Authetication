@@ -86,10 +86,11 @@ router.get('/token', validateTokenExchange, async (req, res) => {
       upsert: true,
     })) as IUser;
 
-    // Step 3: Generate Access
-    const uuid = uuidv4();
-
+    // Step 3: create a login Session if doesn't exists.
     const deviceId = req.cookies?.deviceId ? req.cookies.deviceId : uuidv4();
+    let refreshToken = req.cookies?.refreshToken;
+    const isSessionExists = (await getSession({ deviceId })) as ISession;
+    const uuid = isSessionExists && String(isSessionExists._user) === String(user._id) ? isSessionExists.uuid : uuidv4();
 
     const payload = {
       issuer: 'accounts.vibely.com',
@@ -98,14 +99,6 @@ router.get('/token', validateTokenExchange, async (req, res) => {
       email: user.email,
       uuid,
     };
-
-    const accessToken = generateToken({ ...payload, aud }, 'access', {
-      expiresIn: `${ACCESS_TOKEN_EXPIRED_IN}d`,
-    });
-    let refreshToken = req.cookies?.refreshToken;
-
-    // Step 4: create a login Session if doesn't exists.
-    const isSessionExists = (await getSession({ deviceId })) as ISession;
 
     // Makesure one session exists for one device one user.
     if (
@@ -136,6 +129,11 @@ router.get('/token', validateTokenExchange, async (req, res) => {
       });
     }
 
+    // Step 4: Generate Access
+    const accessToken = generateToken({ ...payload, aud }, 'access', {
+      expiresIn: `${ACCESS_TOKEN_EXPIRED_IN}d`,
+    });
+
     // Step 5: Set access token & deviceIdin cookie.
     const cookieOptions: CookieOptions = {
       httpOnly: true,
@@ -143,7 +141,7 @@ router.get('/token', validateTokenExchange, async (req, res) => {
       sameSite: 'strict',
     };
     res.cookie('accessToken', accessToken, cookieOptions);
-    res.cookie('refreshToken', refreshToken, cookieOptions);
+    res.cookie('refreshToken', refreshToken, { ...cookieOptions, path: '/auth/refresh' });
     res.cookie('deviceId', deviceId, cookieOptions);
 
     return sendResponse(
