@@ -90,7 +90,10 @@ router.get('/token', validateTokenExchange, async (req, res) => {
     const deviceId = req.cookies?.deviceId ? req.cookies.deviceId : uuidv4();
     let refreshToken = req.cookies?.refreshToken;
     const isSessionExists = (await getSession({ deviceId })) as ISession;
-    const uuid = isSessionExists && String(isSessionExists._user) === String(user._id) ? isSessionExists.uuid : uuidv4();
+    const uuid =
+      isSessionExists && String(isSessionExists._user) === String(user._id)
+        ? isSessionExists.uuid
+        : uuidv4();
 
     const payload = {
       issuer: 'accounts.vibely.com',
@@ -141,7 +144,10 @@ router.get('/token', validateTokenExchange, async (req, res) => {
       sameSite: 'strict',
     };
     res.cookie('accessToken', accessToken, cookieOptions);
-    res.cookie('refreshToken', refreshToken, { ...cookieOptions, path: '/auth/refresh' });
+    res.cookie('refreshToken', refreshToken, {
+      ...cookieOptions,
+      path: '/auth/refresh',
+    });
     res.cookie('deviceId', deviceId, cookieOptions);
 
     return sendResponse(
