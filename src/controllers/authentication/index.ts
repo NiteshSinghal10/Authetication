@@ -168,13 +168,13 @@ router.get('/check-session', validateCheckSession, async (req, res) => {
   try {
     const uuid = req.cookies?.uuid;
     const { aud, deviceType } = req.query;
-    const session = await getSession({ uuid }) as ISession;
+    const session = (await getSession({ uuid })) as ISession;
 
-    if(!session) {
+    if (!session) {
       throw new Error(RESPONSE_MESSAGES.en.session_not_found);
     }
 
-    const user = await getUser({ _id: session._user }) as IUser;
+    const user = (await getUser({ _id: session._user })) as IUser;
 
     const payload = {
       issuer: 'accounts.vibely.com',
@@ -206,6 +206,6 @@ router.get('/check-session', validateCheckSession, async (req, res) => {
     const err = error as IError;
     return sendResponse(res, 401, false, err.message);
   }
-})
+});
 
 export const authController = router;
