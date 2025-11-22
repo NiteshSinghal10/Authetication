@@ -8,14 +8,14 @@ export const createUser = (data: object) =>
 
 export const getUser = (
   search: object,
-  projection: object,
-  options: object,
-  populate: IPopulate[],
+  projection?: object,
+  options?: object,
+  populate?: IPopulate[],
 ) =>
   new Promise((resolve, reject) => {
     const query = USER.findOne(search, projection, options);
 
-    if (populate.length) {
+    if (populate && populate.length) {
       populate.forEach((pop) => query.populate(pop));
     }
 

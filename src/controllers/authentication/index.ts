@@ -15,14 +15,15 @@ import {
   ACCESS_TOKEN_EXPIRED_IN,
   GOOGLE_PEOPLE_API,
 } from '../../lib';
-import { validateTokenExchange } from '../../middleware';
+import { validateCheckSession, validateTokenExchange } from '../../middleware';
 import {
   getSession,
   updateUser,
   createSession,
   deleteSession,
+  getUser,
 } from '../../services';
-import { IGooglePeople, ISession, IUser } from '../../interfaces';
+import { IError, IGooglePeople, ISession, IUser } from '../../interfaces';
 
 const router = Router();
 
@@ -137,7 +138,7 @@ router.get('/token', validateTokenExchange, async (req, res) => {
       expiresIn: `${ACCESS_TOKEN_EXPIRED_IN}d`,
     });
 
-    // Step 5: Set access token & deviceIdin cookie.
+    // Step 5: Set access token & deviceIdin cookie if device type is WEB.
     const cookieOptions: CookieOptions = {
       httpOnly: true,
       secure: true,
@@ -149,6 +150,7 @@ router.get('/token', validateTokenExchange, async (req, res) => {
       path: '/auth/refresh',
     });
     res.cookie('deviceId', deviceId, cookieOptions);
+    res.cookie('uuid', uuid, cookieOptions);
 
     return sendResponse(
       res,
@@ -161,5 +163,49 @@ router.get('/token', validateTokenExchange, async (req, res) => {
     return sendResponse(res, 400, false, error);
   }
 });
+
+router.get('/check-session', validateCheckSession, async (req, res) => {
+  try {
+    const uuid = req.cookies?.uuid;
+    const { aud, deviceType } = req.query;
+    const session = await getSession({ uuid }) as ISession;
+
+    if(!session) {
+      throw new Error(RESPONSE_MESSAGES.en.session_not_found);
+    }
+
+    const user = await getUser({ _id: session._user }) as IUser;
+
+    const payload = {
+      issuer: 'accounts.vibely.com',
+      sub: user._id,
+      name: `${user.firstName} ${user.lastName}`,
+      email: user.email,
+      uuid,
+    };
+
+    const accessToken = generateToken({ ...payload, aud }, 'access', {
+      expiresIn: `${ACCESS_TOKEN_EXPIRED_IN}d`,
+    });
+
+    const cookieOptions: CookieOptions = {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+    };
+    res.cookie('accessToken', accessToken, cookieOptions);
+
+    return sendResponse(
+      res,
+      200,
+      true,
+      RESPONSE_MESSAGES.en.success,
+      deviceType !== 'WEB' ? accessToken : '',
+    );
+  } catch (error) {
+    const err = error as IError;
+    return sendResponse(res, 401, false, err.message);
+  }
+})
 
 export const authController = router;
