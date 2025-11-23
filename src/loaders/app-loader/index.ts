@@ -8,18 +8,19 @@ import router from '../../router';
 
 const app = express();
 
-function corsCheck (origin: string| undefined, callback: (err: Error | null, origin?: any) => void) {
-  if (!origin) return callback(null, true); // Allow mobile apps / curl / Postman
-    
+function corsCheck(
+  origin: string | undefined,
+  callback: (err: Error | null, origin?: any) => void,
+) {
+  if (!origin) {return callback(null, true);} // Allow mobile apps / curl / Postman
+
   // Normal allowed origins list
-  const allowedOrigins = [
-    "http://localhost:4200"
-  ];
+  const allowedOrigins = ['http://localhost:4200'];
 
   if (allowedOrigins.includes(origin)) {
     callback(null, true);
   } else {
-    callback(new Error("Not allowed by CORS"));
+    callback(new Error('Not allowed by CORS'));
   }
 }
 
