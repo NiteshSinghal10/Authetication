@@ -13,7 +13,7 @@ export const appLoader = () => {
 
   app.use(
     cors({
-      origin: '*', // Allow all origins. Change as needed for production.
+      origin: true, // Allow all origins. Change as needed for production.
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
       allowedHeaders: ['Content-Type', 'Authorization'],
       credentials: true,
