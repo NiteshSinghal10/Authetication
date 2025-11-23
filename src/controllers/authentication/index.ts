@@ -142,7 +142,7 @@ router.get('/token', validateTokenExchange, async (req, res) => {
     const cookieOptions: CookieOptions = {
       httpOnly: true,
       secure: true,
-      sameSite: 'strict',
+      sameSite: 'none',
     };
     res.cookie('accessToken', accessToken, cookieOptions);
     res.cookie('refreshToken', refreshToken, {
