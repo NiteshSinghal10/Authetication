@@ -12,7 +12,9 @@ function corsCheck(
   origin: string | undefined,
   callback: (err: Error | null, origin?: any) => void,
 ) {
-  if (!origin) {return callback(null, true);} // Allow mobile apps / curl / Postman
+  if (!origin) {
+    return callback(null, true);
+  } // Allow mobile apps / curl / Postman
 
   // Normal allowed origins list
   const allowedOrigins = ['http://localhost:4200'];
