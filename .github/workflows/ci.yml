@@ -25,6 +25,9 @@ jobs:
 
       - name: Check build folder
         run: ls -la
+      
+      - name: check inside dist
+        run: ls dist/
 
   deploy:
     name: Deploy to server
