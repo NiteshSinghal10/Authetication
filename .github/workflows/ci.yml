@@ -23,12 +23,6 @@ jobs:
       - name: Run build
         run: npm run build
 
-      - name: Check build folder
-        run: ls -la
-
-      - name: check inside dist
-        run: ls dist/
-
   deploy:
     name: Deploy to server
     runs-on: ubuntu-latest
@@ -37,9 +31,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      
-      - name: checking
-        run: ls -la
+
+      - name: Run build
+        run: npm run build
 
       - name: Copy files to server
         uses: appleboy/scp-action@v0.1.0
