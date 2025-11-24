@@ -22,7 +22,7 @@ jobs:
 
       - name: Run tests
         run: npm run build
-  
+
   deploy:
     name: Deploy to server
     runs-on: ubuntu-latest
@@ -30,7 +30,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-      - uses: actions/checkout@v4
+        uses: actions/checkout@v4
 
       - name: Copy files to server
         uses: appleboy/scp-action@v0.1.0
