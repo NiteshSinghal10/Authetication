@@ -35,6 +35,9 @@ jobs:
     needs: build-test
 
     steps:
+      - name: checking
+        uses: ls
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
