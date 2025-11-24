@@ -25,7 +25,7 @@ jobs:
 
       - name: Check build folder
         run: ls -la
-      
+
       - name: check inside dist
         run: ls dist/
 
@@ -44,5 +44,5 @@ jobs:
           host: ${{ vars.SERVER_IP }}
           username: ${{ vars.SERVER_USER }}
           key: ${{ vars.SERVER_KEY }}
-          source: "dist/*"
+          source: "dist"
           target: "/var/www/myapp"
