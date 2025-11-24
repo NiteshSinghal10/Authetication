@@ -36,7 +36,7 @@ jobs:
 
     steps:
       - name: checking
-        uses: ls -la
+        run: ls -la
 
       - name: Checkout repository
         uses: actions/checkout@v4
