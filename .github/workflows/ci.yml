@@ -20,8 +20,11 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run tests
+      - name: Run build
         run: npm run build
+
+      - name: Check build folder
+        run: ls -la
 
   deploy:
     name: Deploy to server
