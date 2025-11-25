@@ -65,7 +65,7 @@ router.get('/token', validateTokenExchange, async (req, res) => {
       },
     );
 
-    console.log("Staging -->", GOOGLE_PEOPLE_API)
+    console.log('Staging -->', GOOGLE_PEOPLE_API);
 
     const userInfo = {
       firstName: googleResult.names?.find((obj) => obj.metadata.primary)
@@ -85,7 +85,7 @@ router.get('/token', validateTokenExchange, async (req, res) => {
           .day,
       },
     };
-    console.log('Step 0');
+    console.log('Step 0: ', userInfo);
 
     // Step 2: Upsert User
     const user = (await updateUser({ email: userInfo?.email }, userInfo, {
