@@ -50,7 +50,7 @@ router.get('/token', validateTokenExchange, async (req, res) => {
       },
     );
 
-    console.log("-->", GOOGLE_CODE_EXCHANGE_API)
+    console.log('-->', GOOGLE_CODE_EXCHANGE_API);
 
     // Step 1: Extract Google User info, gender & birthday
     const googleResult = await callOtherService<IGooglePeople>(
@@ -83,6 +83,7 @@ router.get('/token', validateTokenExchange, async (req, res) => {
           .day,
       },
     };
+    console.log("Step 0")
 
     // Step 2: Upsert User
     const user = (await updateUser({ email: userInfo?.email }, userInfo, {
@@ -105,6 +106,7 @@ router.get('/token', validateTokenExchange, async (req, res) => {
       email: user.email,
       uuid,
     };
+    console.log("Step 1")
 
     // Makesure one session exists for one device one user.
     if (
@@ -112,7 +114,7 @@ router.get('/token', validateTokenExchange, async (req, res) => {
       (isSessionExists && String(isSessionExists._user) !== String(user._id))
     ) {
       const { deviceName, userAgent, ipAddress } = getDeviceInfo(req);
-
+      console.log("Step 2")
       refreshToken = generateToken(payload, 'refresh', {
         expiresIn: `${REFRESH_TOKEN_EXPIRED_IN}d`,
       });
@@ -123,6 +125,7 @@ router.get('/token', validateTokenExchange, async (req, res) => {
       ) {
         await deleteSession({ _id: isSessionExists._id });
       }
+      console.log("Step 3")
 
       await createSession({
         deviceId,
