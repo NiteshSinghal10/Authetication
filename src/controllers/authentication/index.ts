@@ -50,7 +50,6 @@ router.get('/token', validateTokenExchange, async (req, res) => {
       },
     );
 
-
     // Step 1: Extract Google User info, gender & birthday
     const googleResult = await callOtherService<IGooglePeople>(
       `${GOOGLE_PEOPLE_API}?personFields=names,emailAddresses,photos,birthdays,genders,phoneNumbers`,
@@ -63,7 +62,6 @@ router.get('/token', validateTokenExchange, async (req, res) => {
         },
       },
     );
-
 
     const userInfo = {
       firstName: googleResult.names?.find((obj) => obj.metadata.primary)
@@ -123,7 +121,6 @@ router.get('/token', validateTokenExchange, async (req, res) => {
       ) {
         await deleteSession({ _id: isSessionExists._id });
       }
-
 
       await createSession({
         deviceId,
