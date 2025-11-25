@@ -51,4 +51,4 @@ jobs:
           username: ${{ vars.SERVER_USER }}
           key: ${{ vars.SERVER_KEY }}
           source: "dist"
-          target: "/var/www/myapp" 
+          target: "/var/www/myapp"
