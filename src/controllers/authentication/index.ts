@@ -50,6 +50,8 @@ router.get('/token', validateTokenExchange, async (req, res) => {
       },
     );
 
+    console.log("-->", GOOGLE_CODE_EXCHANGE_API)
+
     // Step 1: Extract Google User info, gender & birthday
     const googleResult = await callOtherService<IGooglePeople>(
       `${GOOGLE_PEOPLE_API}?personFields=names,emailAddresses,photos,birthdays,genders,phoneNumbers`,
