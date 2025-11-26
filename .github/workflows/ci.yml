@@ -70,7 +70,7 @@ jobs:
 
 
             echo "Changing directory..."
-            cd /home/nitesh/Desktop/vibely/backend/Authetication
+            cd /Desktop/vibely/backend/Authetication
 
             echo "Checking out staging branch..."
             git checkout staging
