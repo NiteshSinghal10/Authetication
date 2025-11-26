@@ -50,3 +50,4 @@ jobs:
 
             echo "Reloading PM2..."
             pm2 reload authentication
+
