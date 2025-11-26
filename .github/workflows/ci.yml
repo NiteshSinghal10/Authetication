@@ -43,6 +43,27 @@ jobs:
           echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/key/mykey.pem
           chmod 600 ~/key/mykey.pem
 
+      - name: Debug SSH Key
+        run: |
+          echo "Checking if key file exists..."
+          ls -la ~/.ssh/mykey.pem
+      
+          echo "Checking file permissions..."
+          stat ~/.ssh/mykey.pem
+      
+          echo "Checking file size..."
+          wc -c ~/.ssh/mykey.pem
+      
+          echo "Checking key format (first/last lines)..."
+          head -n 1 ~/.ssh/mykey.pem
+          tail -n 1 ~/.ssh/mykey.pem
+      
+          echo "Validating key..."
+          ssh-keygen -l -f ~/.ssh/mykey.pem || echo "Key validation failed!"
+      
+          echo "Checking for whitespace issues..."
+          file ~/.ssh/mykey.pem
+
       - name: Run deployment over Cloudflare SSH
         run: |
           ssh -i ~/key/mykey.pem -o StrictHostKeyChecking=no -o ProxyCommand="cloudflared access ssh --hostname ssh.vib3ly.shop" nitesh@ssh.vib3ly.shop
