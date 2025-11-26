@@ -29,13 +29,25 @@ jobs:
     needs: build-test
 
     steps:
-      - name: Run deployment steps over SSH
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ vars.SERVER_IP }}
-          username: ${{ vars.SERVER_USER }}
-          key: ${{ vars.SERVER_KEY }}
-          script: |
+      - name: Install cloudflared
+        run: |
+          wget -q https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -O cloudflared
+          sudo mv cloudflared /usr/local/bin/cloudflared
+          sudo chmod +x /usr/local/bin/cloudflared
+
+      - name: Run deployment over Cloudflare SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ vars.SERVER_KEY }}
+        run: |
+          # Write private key
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+          # Run commands over SSH using ProxyCommand
+          ssh -o StrictHostKeyChecking=no \
+              -o ProxyCommand="cloudflared access ssh --hostname ssh.vib3ly.shop" \
+              nitesh@ssh.vib3ly.shop << 'EOF'
             cd /home/nitesh/Desktop/vibely/backend/Authetication
 
             echo "Checking out staging branch..."
@@ -50,4 +62,4 @@ jobs:
 
             echo "Reloading PM2..."
             pm2 reload authentication
-
+          EOF
