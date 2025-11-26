@@ -72,7 +72,10 @@ jobs:
             pwd
 
             echo "Changing directory..."
-            cd /Desktop/vibely/backend/Authetication
+            cd Desktop/vibely/backend/Authetication
+
+            echo "Checking pwd:"
+            pwd
 
             echo "Checking out staging branch..."
             git checkout staging
