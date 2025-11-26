@@ -70,6 +70,9 @@ jobs:
 
             echo "Current directory check:"
             pwd
+            
+            echo "Source Bash"
+            source ~/.bashrc
 
             echo "Changing directory..."
             cd Desktop/vibely/backend/Authetication
