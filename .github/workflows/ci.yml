@@ -45,11 +45,8 @@ jobs:
 
       - name: Run deployment over Cloudflare SSH
         run: |
-          ssh -o StrictHostKeyChecking=no \
-              -o UserKnownHostsFile=/dev/null \
-              -o LogLevel=ERROR \
-              -o ProxyCommand="cloudflared access ssh --hostname ssh.vib3ly.shop" \
-              nitesh@ssh.vib3ly.shop << 'EOF'
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ProxyCommand="cloudflared access ssh --hostname ssh.vib3ly.shop" nitesh@ssh.vib3ly.shop
+
             echo "Changing directory..."
             cd /home/nitesh/Desktop/vibely/backend/Authetication
 
