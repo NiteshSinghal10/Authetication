@@ -66,8 +66,10 @@ jobs:
 
       - name: Run deployment over Cloudflare SSH
         run: |
-          ssh -i ~/key/mykey.pem -o StrictHostKeyChecking=no -o ProxyCommand="cloudflared access ssh --hostname ssh.vib3ly.shop" nitesh@ssh.vib3ly.shop
+          ssh -i ~/key/mykey.pem -o StrictHostKeyChecking=no -o ProxyCommand="cloudflared access ssh --hostname ssh.vib3ly.shop" nitesh@ssh.vib3ly.shop << 'EOF'
 
+            echo "Current directory check:"
+            pwd
 
             echo "Changing directory..."
             cd /Desktop/vibely/backend/Authetication
