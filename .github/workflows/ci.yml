@@ -46,23 +46,23 @@ jobs:
       - name: Debug SSH Key
         run: |
           echo "Checking if key file exists..."
-          ls -la ~/.ssh/mykey.pem
-      
+          ls -la ~/key/mykey.pem
+
           echo "Checking file permissions..."
-          stat ~/.ssh/mykey.pem
-      
+          stat ~/key/mykey.pem
+
           echo "Checking file size..."
-          wc -c ~/.ssh/mykey.pem
-      
+          wc -c ~/key/mykey.pem
+
           echo "Checking key format (first/last lines)..."
-          head -n 1 ~/.ssh/mykey.pem
-          tail -n 1 ~/.ssh/mykey.pem
-      
+          head -n 1 ~/key/mykey.pem
+          tail -n 1 ~/key/mykey.pem
+
           echo "Validating key..."
-          ssh-keygen -l -f ~/.ssh/mykey.pem || echo "Key validation failed!"
-      
+          ssh-keygen -l -f ~/key/mykey.pem || echo "Key validation failed!"
+
           echo "Checking for whitespace issues..."
-          file ~/.ssh/mykey.pem
+          file ~/key/mykey.pem
 
       - name: Run deployment over Cloudflare SSH
         run: |
