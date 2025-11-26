@@ -37,7 +37,7 @@ jobs:
 
       - name: Set up SSH key
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.SERVER_KEY }}
+          SSH_PRIVATE_KEY: ${{ vars.SERVER_KEY }}
         run: |
           mkdir -p ~/key
           echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/key/mykey.pem
