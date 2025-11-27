@@ -3,7 +3,7 @@ import morgan from 'morgan';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 
-import { PORT } from '../../lib';
+import { FRONTEND_DOMAIN, PORT } from '../../lib';
 import router from '../../router';
 
 const app = express();
@@ -17,7 +17,7 @@ function corsCheck(
   } // Allow mobile apps / curl / Postman
 
   // Normal allowed origins list
-  const allowedOrigins = ['http://localhost:4200'];
+  const allowedOrigins = ['http://localhost:4200', FRONTEND_DOMAIN];
 
   if (allowedOrigins.includes(origin)) {
     callback(null, true);

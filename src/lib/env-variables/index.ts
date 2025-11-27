@@ -29,3 +29,5 @@ export const REFRESH_TOKEN_EXPIRED_IN = Number(
 export const ACCESS_TOKEN_EXPIRED_IN = Number(
   process.env.ACCESS_TOKEN_EXPIRED_IN,
 );
+
+export const FRONTEND_DOMAIN = String(process.env.FRONTEND_DOMAIN);
