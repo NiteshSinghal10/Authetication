@@ -38,6 +38,7 @@ jobs:
       - name: Set up SSH key
         env:
           SSH_PRIVATE_KEY: ${{ vars.SERVER_KEY }}
+          ENV_FILE: ${{ vars.ENV_FILE }}
         run: |
           mkdir -p ~/key
           echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/key/mykey.pem
@@ -66,23 +67,23 @@ jobs:
             echo "Installing dependencies..."
             npm i
 
+            echo "Removing Old Dist"
+            rm -r dist
+
             echo "Building project..."
             npm run build
 
             echo "Copy Package json"
             cp package.json ./dist/
 
-            echo "Remoing old .env"
-            rm ./dist/.env
-
             echo "Going to dist"
             cd dist
 
             echo "Consoling ENV"
-            echo "${{ vars.ENV_FILE }}"
+            echo "$ENV_FILE"
 
             echo "Creating .env"
-            echo "${{ vars.ENV_FILE }}" > .env
+            echo "$ENV_FILE" > .env
 
             echo "Reloading PM2..."
             npx pm2 reload authentication
