@@ -85,11 +85,8 @@ jobs:
             echo "Going to dist"
             cd dist
 
-            echo "Consoling ENV"
-            echo "$ENV_FILE"
-
-            echo "Creating .env"
-            echo "$ENV_FILE" > .env
+            echo "Moving .env file from tmp"
+            mv /tmp/.env.tmp .env
 
             echo "Reloading PM2..."
             npx pm2 reload authentication
