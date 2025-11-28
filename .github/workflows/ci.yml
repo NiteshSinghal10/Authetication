@@ -38,13 +38,14 @@ jobs:
       - name: Set up SSH key
         env:
           SSH_PRIVATE_KEY: ${{ vars.SERVER_KEY }}
-          ENV_FILE: ${{ vars.ENV_FILE }}
         run: |
           mkdir -p ~/key
           echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/key/mykey.pem
           chmod 600 ~/key/mykey.pem
 
       - name: Run deployment over Cloudflare SSH
+        env:
+          ENV_FILE: ${{ vars.ENV_FILE }}
         run: |
           ssh -i ~/key/mykey.pem -o StrictHostKeyChecking=no -o ProxyCommand="cloudflared access ssh --hostname ssh.vib3ly.shop" nitesh@ssh.vib3ly.shop << 'EOF'
 
