@@ -43,27 +43,6 @@ jobs:
           echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/key/mykey.pem
           chmod 600 ~/key/mykey.pem
 
-      - name: Debug SSH Key
-        run: |
-          echo "Checking if key file exists..."
-          ls -la ~/key/mykey.pem
-
-          echo "Checking file permissions..."
-          stat ~/key/mykey.pem
-
-          echo "Checking file size..."
-          wc -c ~/key/mykey.pem
-
-          echo "Checking key format (first/last lines)..."
-          head -n 1 ~/key/mykey.pem
-          tail -n 1 ~/key/mykey.pem
-
-          echo "Validating key..."
-          ssh-keygen -l -f ~/key/mykey.pem || echo "Key validation failed!"
-
-          echo "Checking for whitespace issues..."
-          file ~/key/mykey.pem
-
       - name: Run deployment over Cloudflare SSH
         run: |
           ssh -i ~/key/mykey.pem -o StrictHostKeyChecking=no -o ProxyCommand="cloudflared access ssh --hostname ssh.vib3ly.shop" nitesh@ssh.vib3ly.shop << 'EOF'
@@ -89,6 +68,18 @@ jobs:
 
             echo "Building project..."
             npm run build
+
+            echo "Copy Package json"
+            cp package.json ./dist/
+
+            echo "Remoing old .env"
+            rm ./dist/.env
+
+            echo "Going to dist"
+            cd dist
+
+            echo "Creating .env"
+            echo "${{ vars.ENV_FILE }}" > .env
 
             echo "Reloading PM2..."
             npx pm2 reload authentication
