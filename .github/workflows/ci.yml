@@ -47,6 +47,10 @@ jobs:
         env:
           ENV_FILE: ${{ vars.ENV_FILE }}
         run: |
+          echo "$ENV_FILE" > /tmp/env_content
+
+          scp -i ~/key/mykey.pem -o StrictHostKeyChecking=no -o ProxyCommand="cloudflared access ssh --hostname ssh.vib3ly.shop" /tmp/env_content nitesh@ssh.vib3ly.shop:/tmp/.env.tmp
+
           ssh -i ~/key/mykey.pem -o StrictHostKeyChecking=no -o ProxyCommand="cloudflared access ssh --hostname ssh.vib3ly.shop" nitesh@ssh.vib3ly.shop << 'EOF'
 
             echo "Current directory check:"
