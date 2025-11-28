@@ -78,6 +78,9 @@ jobs:
             echo "Going to dist"
             cd dist
 
+            echo "Consoling ENV"
+            echo "${{ vars.ENV_FILE }}"
+
             echo "Creating .env"
             echo "${{ vars.ENV_FILE }}" > .env
 
