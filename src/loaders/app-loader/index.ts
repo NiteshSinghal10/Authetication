@@ -17,7 +17,11 @@ function corsCheck(
   } // Allow mobile apps / curl / Postman
 
   // Normal allowed origins list
-  const allowedOrigins = ['http://localhost:4200', FRONTEND_DOMAIN];
+  const allowedOrigins = [
+    'http://localhost:4200',
+    'http://localhost:57359',
+    FRONTEND_DOMAIN,
+  ];
 
   if (allowedOrigins.includes(origin)) {
     callback(null, true);

@@ -11,9 +11,9 @@ import {
   callOtherService,
   generateToken,
   getDeviceInfo,
-  REFRESH_TOKEN_EXPIRED_IN,
   ACCESS_TOKEN_EXPIRED_IN,
   GOOGLE_PEOPLE_API,
+  validateToken,
 } from '../../lib';
 import { validateCheckSession, validateTokenExchange } from '../../middleware';
 import {
@@ -23,7 +23,13 @@ import {
   deleteSession,
   getUser,
 } from '../../services';
-import { IError, IGooglePeople, ISession, IUser } from '../../interfaces';
+import {
+  IError,
+  IGooglePeople,
+  ISession,
+  ITokenPayload,
+  IUser,
+} from '../../interfaces';
 
 const router = Router();
 
@@ -89,7 +95,6 @@ router.get('/token', validateTokenExchange, async (req, res) => {
 
     // Step 3: create a login Session if doesn't exists.
     const deviceId = req.cookies?.deviceId ? req.cookies.deviceId : uuidv4();
-    let refreshToken = req.cookies?.refreshToken;
     const isSessionExists = (await getSession({ deviceId })) as ISession;
     const uuid =
       isSessionExists && String(isSessionExists._user) === String(user._id)
@@ -111,10 +116,6 @@ router.get('/token', validateTokenExchange, async (req, res) => {
     ) {
       const { deviceName, userAgent, ipAddress } = getDeviceInfo(req);
 
-      refreshToken = generateToken(payload, 'refresh', {
-        expiresIn: `${REFRESH_TOKEN_EXPIRED_IN}d`,
-      });
-
       if (
         isSessionExists &&
         String(isSessionExists._user) !== String(user._id)
@@ -135,7 +136,7 @@ router.get('/token', validateTokenExchange, async (req, res) => {
 
     // Step 4: Generate Access
     const accessToken = generateToken({ ...payload, aud }, 'access', {
-      expiresIn: `${ACCESS_TOKEN_EXPIRED_IN}d`,
+      expiresIn: `${ACCESS_TOKEN_EXPIRED_IN}m`,
     });
 
     // Step 5: Set access token & deviceIdin cookie if device type is WEB.
@@ -145,10 +146,6 @@ router.get('/token', validateTokenExchange, async (req, res) => {
       sameSite: 'none',
     };
     res.cookie('accessToken', accessToken, cookieOptions);
-    res.cookie('refreshToken', refreshToken, {
-      ...cookieOptions,
-      path: '/auth/refresh',
-    });
     res.cookie('deviceId', deviceId, cookieOptions);
     res.cookie('uuid', uuid, cookieOptions);
 
@@ -202,6 +199,37 @@ router.get('/check-session', validateCheckSession, async (req, res) => {
       RESPONSE_MESSAGES.en.success,
       deviceType !== 'WEB' ? accessToken : '',
     );
+  } catch (error) {
+    const err = error as IError;
+    return sendResponse(res, 401, false, err.message);
+  }
+});
+
+router.get('/validate-token', async (req, res) => {
+  try {
+    const token = req.cookies?.accessToken;
+
+    // If token is not found then send the response with 401 status code.
+    if (!token) {
+      throw new Error(RESPONSE_MESSAGES.en.unauthorized);
+    }
+
+    const payload = validateToken(token) as ITokenPayload;
+
+    const session = (await getSession({
+      uuid: payload.uuid,
+      _user: payload.sub,
+    })) as ISession;
+
+    if (!session) {
+      throw new Error(RESPONSE_MESSAGES.en.session_not_found);
+    }
+
+    if (session.revoked) {
+      throw new Error(RESPONSE_MESSAGES.en.session_revoked);
+    }
+
+    return sendResponse(res, 200, true, RESPONSE_MESSAGES.en.success, payload);
   } catch (error) {
     const err = error as IError;
     return sendResponse(res, 401, false, err.message);
