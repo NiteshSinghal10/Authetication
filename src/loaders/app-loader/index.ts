@@ -19,7 +19,7 @@ function corsCheck(
   // Normal allowed origins list
   const allowedOrigins = [
     'http://localhost:4200',
-    'http://localhost:57359',
+    'http://localhost:4300',
     FRONTEND_DOMAIN,
   ];
 
@@ -31,6 +31,8 @@ function corsCheck(
 }
 
 export const appLoader = () => {
+  app.set('trust proxy', true);
+
   app.use(express.json());
 
   app.use(

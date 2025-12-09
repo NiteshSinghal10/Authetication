@@ -148,6 +148,7 @@ router.get('/token', validateTokenExchange, async (req, res) => {
     res.cookie('accessToken', accessToken, cookieOptions);
     res.cookie('deviceId', deviceId, cookieOptions);
     res.cookie('uuid', uuid, cookieOptions);
+    res.cookie('_user', user, cookieOptions);
 
     return sendResponse(
       res,
@@ -164,8 +165,10 @@ router.get('/token', validateTokenExchange, async (req, res) => {
 router.get('/check-session', validateCheckSession, async (req, res) => {
   try {
     const uuid = req.cookies?.uuid;
+    const _user = req.cookies?._user;
+    const deviceId = req.cookies?.deviceId;
     const { aud, deviceType } = req.query;
-    const session = (await getSession({ uuid })) as ISession;
+    const session = (await getSession({ $or: [ { uuid }, { _user, deviceId }] })) as ISession;
 
     if (!session) {
       throw new Error(RESPONSE_MESSAGES.en.session_not_found);
@@ -205,7 +208,7 @@ router.get('/check-session', validateCheckSession, async (req, res) => {
   }
 });
 
-router.get('/validate-token', async (req, res) => {
+router.get('/my-profile', async (req, res) => {
   try {
     const token = req.cookies?.accessToken;
 
@@ -229,7 +232,9 @@ router.get('/validate-token', async (req, res) => {
       throw new Error(RESPONSE_MESSAGES.en.session_revoked);
     }
 
-    return sendResponse(res, 200, true, RESPONSE_MESSAGES.en.success, payload);
+    const user = await getUser({ _id: payload.sub });
+
+    return sendResponse(res, 200, true, RESPONSE_MESSAGES.en.success, user);
   } catch (error) {
     const err = error as IError;
     return sendResponse(res, 401, false, err.message);
