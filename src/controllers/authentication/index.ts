@@ -168,7 +168,9 @@ router.get('/check-session', validateCheckSession, async (req, res) => {
     const _user = req.cookies?._user;
     const deviceId = req.cookies?.deviceId;
     const { aud, deviceType } = req.query;
-    const session = (await getSession({ $or: [ { uuid }, { _user, deviceId }] })) as ISession;
+    const session = (await getSession({
+      $or: [{ uuid }, { _user, deviceId }],
+    })) as ISession;
 
     if (!session) {
       throw new Error(RESPONSE_MESSAGES.en.session_not_found);
