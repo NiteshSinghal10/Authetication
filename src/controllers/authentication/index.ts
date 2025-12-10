@@ -213,7 +213,7 @@ router.get('/check-session', validateCheckSession, async (req, res) => {
 
 router.get('/my-profile', async (req, res) => {
   try {
-    console.log("--", req.cookies)
+    console.log('--', req.cookies);
     const token = req.cookies?.accessToken;
 
     // If token is not found then send the response with 401 status code.
