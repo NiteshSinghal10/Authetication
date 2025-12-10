@@ -143,7 +143,7 @@ router.get('/token', validateTokenExchange, async (req, res) => {
     const cookieOptions: CookieOptions = {
       httpOnly: true,
       secure: true,
-      sameSite: 'lax',
+      sameSite: 'none',
       domain: '.vib3ly.shop',
     };
     res.cookie('accessToken', accessToken, cookieOptions);
