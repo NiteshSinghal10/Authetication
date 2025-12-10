@@ -143,8 +143,8 @@ router.get('/token', validateTokenExchange, async (req, res) => {
     const cookieOptions: CookieOptions = {
       httpOnly: true,
       secure: true,
-      sameSite: 'none',
-      domain: '.vib3ly.shop'
+      sameSite: 'lax',
+      domain: '.vib3ly.shop',
     };
     res.cookie('accessToken', accessToken, cookieOptions);
     res.cookie('deviceId', deviceId, cookieOptions);
@@ -213,6 +213,7 @@ router.get('/check-session', validateCheckSession, async (req, res) => {
 
 router.get('/my-profile', async (req, res) => {
   try {
+    console.log("--", req.cookies)
     const token = req.cookies?.accessToken;
 
     // If token is not found then send the response with 401 status code.
