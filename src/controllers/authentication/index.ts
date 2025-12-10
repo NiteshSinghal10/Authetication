@@ -213,6 +213,7 @@ router.get('/check-session', validateCheckSession, async (req, res) => {
 
 router.get('/my-profile', async (req, res) => {
   try {
+    console.log("Ip :", req.ip)
     console.log('--', req.cookies);
     const token = req.cookies?.accessToken;
 
