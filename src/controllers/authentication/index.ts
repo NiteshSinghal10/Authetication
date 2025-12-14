@@ -13,9 +13,12 @@ import {
   getDeviceInfo,
   ACCESS_TOKEN_EXPIRED_IN,
   GOOGLE_PEOPLE_API,
-  validateToken,
 } from '../../lib';
-import { validateCheckSession, validateTokenExchange } from '../../middleware';
+import {
+  validateCheckSession,
+  validateTokenExchange,
+  verifyToken,
+} from '../../middleware';
 import {
   getSession,
   updateUser,
@@ -27,11 +30,17 @@ import {
   IError,
   IGooglePeople,
   ISession,
-  ITokenPayload,
   IUser,
 } from '../../interfaces';
 
 const router = Router();
+
+const cookieOptions: CookieOptions = {
+  httpOnly: true,
+  secure: true,
+  sameSite: 'none',
+  // domain: '.vib3ly.shop',
+};
 
 router.get('/token', validateTokenExchange, async (req, res) => {
   try {
@@ -140,16 +149,10 @@ router.get('/token', validateTokenExchange, async (req, res) => {
     });
 
     // Step 5: Set access token & deviceIdin cookie if device type is WEB.
-    const cookieOptions: CookieOptions = {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'none',
-      domain: '.vib3ly.shop',
-    };
     res.cookie('accessToken', accessToken, cookieOptions);
     res.cookie('deviceId', deviceId, cookieOptions);
     res.cookie('uuid', uuid, cookieOptions);
-    res.cookie('_user', user, cookieOptions);
+    res.cookie('_user', user._id, cookieOptions);
 
     return sendResponse(
       res,
@@ -159,6 +162,7 @@ router.get('/token', validateTokenExchange, async (req, res) => {
       deviceType !== 'WEB' ? accessToken : '',
     );
   } catch (error: any) {
+    console.log('---Error:', error);
     return sendResponse(res, 400, false, error);
   }
 });
@@ -211,38 +215,38 @@ router.get('/check-session', validateCheckSession, async (req, res) => {
   }
 });
 
-router.get('/my-profile', async (req, res) => {
+router.get('/my-profile', verifyToken, async (req, res) => {
   try {
-    console.log('Ip :', req.ip);
-    console.log('--', req.cookies);
-    const token = req.cookies?.accessToken;
+    const { sub } = req.user;
 
-    // If token is not found then send the response with 401 status code.
-    if (!token) {
-      throw new Error(RESPONSE_MESSAGES.en.unauthorized);
-    }
-
-    const payload = validateToken(token) as ITokenPayload;
-
-    const session = (await getSession({
-      uuid: payload.uuid,
-      _user: payload.sub,
-    })) as ISession;
-
-    if (!session) {
-      throw new Error(RESPONSE_MESSAGES.en.session_not_found);
-    }
-
-    if (session.revoked) {
-      throw new Error(RESPONSE_MESSAGES.en.session_revoked);
-    }
-
-    const user = await getUser({ _id: payload.sub });
+    const user = await getUser({ _id: sub });
 
     return sendResponse(res, 200, true, RESPONSE_MESSAGES.en.success, user);
   } catch (error) {
     const err = error as IError;
-    return sendResponse(res, 401, false, err.message);
+    return sendResponse(res, 400, false, err.message);
+  }
+});
+
+router.put('/logout', verifyToken, async (req, res) => {
+  try {
+    const uuid = req.cookies?.uuid;
+    const session = (await deleteSession({ uuid })) as ISession;
+
+    res.clearCookie('accessToken', cookieOptions);
+    res.clearCookie('uuid', cookieOptions);
+    res.clearCookie('_user', cookieOptions);
+
+    return sendResponse(
+      res,
+      200,
+      true,
+      RESPONSE_MESSAGES.en.logout_successfully,
+      session,
+    );
+  } catch (error) {
+    const err = error as IError;
+    return sendResponse(res, 400, false, err.message);
   }
 });
 

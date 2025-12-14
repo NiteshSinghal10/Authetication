@@ -19,3 +19,16 @@ export interface ITokenPayload {
   email: string;
   uuid: string;
 }
+
+export interface ILocation {
+  city: string;
+  region: string;
+  country_name: string;
+  latitude: number;
+  longitude: number;
+  country_code: string;
+  country_code_iso3: string;
+  timezone: string;
+  currency: string;
+  languages: string;
+}

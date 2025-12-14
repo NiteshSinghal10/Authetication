@@ -2,7 +2,8 @@ import UAParser from 'ua-parser-js';
 import { Request } from 'express';
 import crypto from 'crypto';
 
-import { ALGORITHM, ENCRYPTION_KEY } from '../../../lib';
+import { ALGORITHM, callOtherService, ENCRYPTION_KEY } from '../../../lib';
+import { ILocation } from '../../../interfaces';
 
 export function getDeviceInfo(req: Request) {
   const parser = new (UAParser as any)(req.headers['user-agent'] || '');
@@ -48,3 +49,40 @@ export function decrypt(hash: string): string {
   ]);
   return decrypted.toString('utf8');
 }
+
+export const getLocation = async (ip: string) => {
+  let actualIp = ip;
+
+  // If localhost, fetch the actual public IP
+  if (ip === '::1' || ip === '127.0.0.1' || ip.startsWith('::ffff:127.0.0.1')) {
+    // Get the real public IP of the machine
+    const publicIpResponse = await callOtherService<{ ip: string }>(
+      'https://api.ipify.org?format=json',
+      'GET',
+    );
+    actualIp = publicIpResponse.ip;
+  }
+
+  // Clean IPv6 prefix
+  if (actualIp.startsWith('::ffff:')) {
+    actualIp = actualIp.replace('::ffff:', '');
+  }
+
+  const response = await callOtherService<ILocation>(
+    `https://ipapi.co/${actualIp}/json/`,
+    'GET',
+  );
+  return {
+    city: response.city,
+    region: response.region,
+    country: response.country_name,
+    latitude: response.latitude,
+    longitude: response.longitude,
+    countryCode: response.country_code,
+    countryCode3: response.country_code_iso3,
+    timezone: response.timezone,
+    currency: response.currency,
+    languages: response.languages,
+    flag: `https://flagcdn.com/${response.country_code.toLowerCase()}.svg`,
+  };
+};

@@ -4,5 +4,6 @@ export const RESPONSE_MESSAGES = {
     unauthorized: 'Access token missing. Please log in.',
     session_revoked: 'Session revoked. Please log in again.',
     session_not_found: 'Session is not found.',
+    logout_successfully: 'Logout successfully.',
   },
 };
