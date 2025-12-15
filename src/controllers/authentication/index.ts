@@ -190,7 +190,7 @@ router.get('/token', validateTokenExchange, async (req, res) => {
         payloadForLocation,
       );
     } catch (error) {
-      console.log("Error:", error);
+      console.log('Error:', error);
     }
   } catch (error: any) {
     return sendResponse(res, 400, false, error);
