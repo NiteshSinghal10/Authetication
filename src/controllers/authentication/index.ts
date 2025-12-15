@@ -149,45 +149,49 @@ router.get('/token', validateTokenExchange, async (req, res) => {
     res.cookie('accessToken', accessToken, cookieOptions);
     res.cookie('deviceId', deviceId, cookieOptions);
     res.cookie('uuid', uuid, cookieOptions);
-    res.cookie('_user', user._id, cookieOptions);
+    res.cookie('_user', String(user._id), cookieOptions);
 
-    // Step 6: Setting Users Location Based on IP.
-    const {
-      city,
-      region,
-      country,
-      latitude,
-      longitude,
-      countryCode,
-      countryCode3,
-      timezone,
-      currency,
-    } = await getLocation(String(req.ip));
-    const payloadForLocation = {
-      _user: user._id,
-      city,
-      region,
-      country,
-      latitude,
-      longitude,
-      countryCode,
-      countryCode3,
-      timezone,
-      currency,
-    };
-    await callOtherService(
-      `${VIBELY_BACKEND_URL}/vibely/api/v1/internal/update-user-location`,
-      'PUT',
-      payloadForLocation,
-    );
-
-    return sendResponse(
+    sendResponse(
       res,
       200,
       true,
       RESPONSE_MESSAGES.en.success,
       deviceType !== 'WEB' ? accessToken : '',
     );
+
+    try {
+      // Step 6: Setting Users Location Based on IP.
+      const {
+        city,
+        region,
+        country,
+        latitude,
+        longitude,
+        countryCode,
+        countryCode3,
+        timezone,
+        currency,
+      } = await getLocation(String(req.ip));
+      const payloadForLocation = {
+        _user: user._id,
+        city,
+        region,
+        country,
+        latitude,
+        longitude,
+        countryCode,
+        countryCode3,
+        timezone,
+        currency,
+      };
+      await callOtherService(
+        `${VIBELY_BACKEND_URL}/vibely/api/v1/internal/update-user-location`,
+        'PUT',
+        payloadForLocation,
+      );
+    } catch (error) {
+      console.log("Error:", error);
+    }
   } catch (error: any) {
     return sendResponse(res, 400, false, error);
   }
