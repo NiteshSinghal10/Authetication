@@ -5,6 +5,6 @@ export const RESPONSE_MESSAGES = {
     session_revoked: 'Session revoked. Please log in again.',
     session_not_found: 'Session is not found.',
     logout_successfully: 'Logout successfully.',
-    unknown_error: 'Unknown Error'
+    unknown_error: 'Unknown Error',
   },
 };

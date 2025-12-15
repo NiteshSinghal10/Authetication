@@ -1,5 +1,5 @@
 export interface IGetQuery {
-  search: Object,
-  project: Object,
-  options: Object
+  search: object;
+  project: object;
+  options: object;
 }
