@@ -72,6 +72,7 @@ export const getLocation = async (ip: string) => {
     `https://ipapi.co/${actualIp}/json/`,
     'GET',
   );
+
   return {
     city: response.city,
     region: response.region,

@@ -31,7 +31,7 @@ function corsCheck(
 }
 
 export const appLoader = () => {
-  app.set('trust proxy', true);
+  app.set('trust proxy', 1);
 
   app.use(express.json());
 

@@ -13,6 +13,8 @@ import {
   getDeviceInfo,
   ACCESS_TOKEN_EXPIRED_IN,
   GOOGLE_PEOPLE_API,
+  VIBELY_BACKEND_URL,
+  getLocation,
 } from '../../lib';
 import {
   validateCheckSession,
@@ -26,12 +28,7 @@ import {
   deleteSession,
   getUser,
 } from '../../services';
-import {
-  IError,
-  IGooglePeople,
-  ISession,
-  IUser,
-} from '../../interfaces';
+import { IError, IGooglePeople, ISession, IUser } from '../../interfaces';
 
 const router = Router();
 
@@ -154,6 +151,22 @@ router.get('/token', validateTokenExchange, async (req, res) => {
     res.cookie('uuid', uuid, cookieOptions);
     res.cookie('_user', user._id, cookieOptions);
 
+    // Step 6: Setting Users Location Based on IP.
+    const { city, region, country, latitude, longitude, countryCode, countryCode3, timezone, currency } = await getLocation(String(req.ip));
+    const payloadForLocation = {
+      _user: user._id,
+      city,
+      region,
+      country,
+      latitude,
+      longitude,
+      countryCode,
+      countryCode3,
+      timezone,
+      currency
+    };
+    await callOtherService(`${VIBELY_BACKEND_URL}/vibely/api/v1/internal/update-user-location`, 'PUT', payloadForLocation);
+
     return sendResponse(
       res,
       200,
@@ -162,7 +175,6 @@ router.get('/token', validateTokenExchange, async (req, res) => {
       deviceType !== 'WEB' ? accessToken : '',
     );
   } catch (error: any) {
-    console.log('---Error:', error);
     return sendResponse(res, 400, false, error);
   }
 });
