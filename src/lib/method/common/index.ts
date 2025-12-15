@@ -2,7 +2,7 @@ import UAParser from 'ua-parser-js';
 import { Request } from 'express';
 import crypto from 'crypto';
 
-import { ALGORITHM, callOtherService, ENCRYPTION_KEY } from '../../../lib';
+import { ALGORITHM, callOtherService, ENCRYPTION_KEY, RESPONSE_MESSAGES } from '../../../lib';
 import { ILocation } from '../../../interfaces';
 
 export function getDeviceInfo(req: Request) {
@@ -87,3 +87,7 @@ export const getLocation = async (ip: string) => {
     flag: `https://flagcdn.com/${response.country_code.toLowerCase()}.svg`,
   };
 };
+
+export const getErrorMessage = (error: any): string => {
+  return  error?.message ? error.message : RESPONSE_MESSAGES.en.unknown_error;
+}

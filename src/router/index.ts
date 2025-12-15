@@ -1,12 +1,14 @@
 import { Router } from 'express';
 
-import { authController } from '../controllers';
+import { authController, internalController } from '../controllers';
 import { sendResponse } from '../lib';
 import { verifyToken } from '../middleware';
 
 const router = Router();
 
 router.use('/auth', authController);
+
+router.use('/internal', internalController);
 
 router.use('/test', verifyToken, async (req, res) => {
   try {
