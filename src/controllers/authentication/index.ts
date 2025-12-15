@@ -152,7 +152,17 @@ router.get('/token', validateTokenExchange, async (req, res) => {
     res.cookie('_user', user._id, cookieOptions);
 
     // Step 6: Setting Users Location Based on IP.
-    const { city, region, country, latitude, longitude, countryCode, countryCode3, timezone, currency } = await getLocation(String(req.ip));
+    const {
+      city,
+      region,
+      country,
+      latitude,
+      longitude,
+      countryCode,
+      countryCode3,
+      timezone,
+      currency,
+    } = await getLocation(String(req.ip));
     const payloadForLocation = {
       _user: user._id,
       city,
@@ -163,9 +173,13 @@ router.get('/token', validateTokenExchange, async (req, res) => {
       countryCode,
       countryCode3,
       timezone,
-      currency
+      currency,
     };
-    await callOtherService(`${VIBELY_BACKEND_URL}/vibely/api/v1/internal/update-user-location`, 'PUT', payloadForLocation);
+    await callOtherService(
+      `${VIBELY_BACKEND_URL}/vibely/api/v1/internal/update-user-location`,
+      'PUT',
+      payloadForLocation,
+    );
 
     return sendResponse(
       res,
