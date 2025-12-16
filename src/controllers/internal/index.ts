@@ -1,19 +1,31 @@
 import { Request, Response, Router } from 'express';
 import { getErrorMessage, RESPONSE_MESSAGES, sendResponse } from '../../lib';
 import { getUsers } from '../../services';
-import { IGetQuery } from '../../interfaces';
 
 const router = Router();
 
-router.get('/users', async (req: Request, res: Response) => {
+router.post('/users', async (req: Request, res: Response) => {
   try {
     const {
       search = {},
       project = {},
       options = {},
-    } = req.query as unknown as IGetQuery;
+      searchValue = '',
+    } = req.body;
 
-    const users = await getUsers(search, project, options, []);
+    const regex = new RegExp(searchValue.trim(), 'i');
+
+    const users = await getUsers(
+      {
+        ...search,
+        ...(searchValue
+          ? { $or: [{ firstName: regex }, { lastName: regex }] }
+          : {}),
+      },
+      project,
+      options,
+      [],
+    );
 
     return sendResponse(res, 200, true, RESPONSE_MESSAGES.en.success, users);
   } catch (error) {

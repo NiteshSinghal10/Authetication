@@ -1,5 +1,1 @@
-export interface IGetQuery {
-  search: object;
-  project: object;
-  options: object;
-}
+export const a = ''
