@@ -60,28 +60,28 @@ jobs:
             echo "Checking pwd:"
             pwd
 
-            # echo "Checking out staging branch..."
-            # git checkout staging
-            # git pull origin staging
+            echo "Checking out staging branch..."
+            git checkout staging
+            git pull origin staging
 
-            # echo "Installing dependencies..."
-            # npm i
+            echo "Installing dependencies..."
+            npm i
 
-            # echo "Removing Old Dist"
-            # rm -r dist
+            echo "Removing Old Dist"
+            rm -r dist
 
-            # echo "Building project..."
-            # npm run build
+            echo "Building project..."
+            npm run build
 
-            # echo "Copy Package json"
-            # cp package.json ./dist/
+            echo "Copy Package json"
+            cp package.json ./dist/
 
-            # echo "Going to dist"
-            # cd dist
+            echo "Going to dist"
+            cd dist
 
-            # echo "Moving .env file from tmp"
-            # mv /tmp/.env.tmp .env
+            echo "Moving .env file from tmp"
+            mv /tmp/.env.tmp .env
 
-            # echo "Reloading PM2..."
-            # npx pm2 reload authentication
+            echo "Reloading PM2..."
+            npx pm2 reload authentication
           EOF
