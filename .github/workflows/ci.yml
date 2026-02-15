@@ -44,7 +44,7 @@ jobs:
           echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/key/mykey.pem
           chmod 600 ~/key/mykey.pem
 
-      - name: Run deployment over Cloudflare SSH
+      - name: Run deployment 
         env:
           ENV_FILE: ${{ vars.ENV_FILE }}
         run: |
