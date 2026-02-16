@@ -58,7 +58,9 @@ jobs:
         env:
           ENV_FILE: ${{ vars.ENV_FILE }}
         run: |
-          scp -i ~/key/mykey.pem -o StrictHostKeyChecking=no "$ENV_FILE" ec2-user@api.truewaysindia.com:/home/ec2-user/Desktop/vibely/backend/Authentication/.env
+          echo "$ENV_FILE" > /tmp/.env
+
+          scp -i ~/key/mykey.pem -o StrictHostKeyChecking=no /tmp/.env ec2-user@api.truewaysindia.com:/home/ec2-user/Desktop/vibely/backend/Authentication/.env
 
           scp -r -i ~/key/mykey.pem -o StrictHostKeyChecking=no ./dist/* ec2-user@api.truewaysindia.com:/home/ec2-user/Desktop/vibely/backend/Authentication/
 
