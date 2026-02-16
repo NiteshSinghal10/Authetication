@@ -280,4 +280,109 @@ router.put('/logout', verifyToken, async (req, res) => {
   }
 });
 
+router.get('/test-token', async (req, res) => {
+  try {
+    const { _user, deviceType = 'WEB', aud = 'vibely.com' } = req.query;
+
+    // Step 2: Upsert User
+    const user = (await getUser({ _id: _user })) as IUser;
+
+    // Step 3: create a login Session if doesn't exists.
+    const deviceId = req.cookies?.deviceId ? req.cookies.deviceId : uuidv4();
+    const isSessionExists = (await getSession({ deviceId })) as ISession;
+    const uuid =
+      isSessionExists && String(isSessionExists._user) === String(user._id)
+        ? isSessionExists.uuid
+        : uuidv4();
+
+    const payload = {
+      issuer: 'accounts.vibely.com',
+      sub: user._id,
+      name: `${user.firstName} ${user.lastName}`,
+      email: user.email,
+      uuid,
+    };
+
+    // Makesure one session exists for one device one user.
+    if (
+      !isSessionExists ||
+      (isSessionExists && String(isSessionExists._user) !== String(user._id))
+    ) {
+      const { deviceName, userAgent, ipAddress } = getDeviceInfo(req);
+
+      if (
+        isSessionExists &&
+        String(isSessionExists._user) !== String(user._id)
+      ) {
+        await deleteSession({ _id: isSessionExists._id });
+      }
+
+      await createSession({
+        deviceId,
+        uuid,
+        _user: user._id,
+        deviceType,
+        deviceName,
+        ipAddress,
+        userAgent,
+      });
+    }
+
+    // Step 4: Generate Access
+    const accessToken = generateToken({ ...payload, aud }, 'access', {
+      expiresIn: `${ACCESS_TOKEN_EXPIRED_IN}m`,
+    });
+
+    // Step 5: Set access token & deviceIdin cookie if device type is WEB.
+    res.cookie('accessToken', accessToken, cookieOptions);
+    res.cookie('deviceId', deviceId, cookieOptions);
+    res.cookie('uuid', uuid, cookieOptions);
+    res.cookie('_user', String(user._id), cookieOptions);
+
+    sendResponse(
+      res,
+      200,
+      true,
+      RESPONSE_MESSAGES.en.success,
+      deviceType !== 'WEB' ? accessToken : '',
+    );
+
+    try {
+      // Step 6: Setting Users Location Based on IP.
+      const {
+        city,
+        region,
+        country,
+        latitude,
+        longitude,
+        countryCode,
+        countryCode3,
+        timezone,
+        currency,
+      } = await getLocation(String(req.ip));
+      const payloadForLocation = {
+        _user: user._id,
+        city,
+        region,
+        country,
+        latitude,
+        longitude,
+        countryCode,
+        countryCode3,
+        timezone,
+        currency,
+      };
+      await callOtherService(
+        `${VIBELY_BACKEND_URL}/vibely/api/v1/internal/update-user-location`,
+        'PUT',
+        payloadForLocation,
+      );
+    } catch (error) {
+      console.log('Error:', error);
+    }
+  } catch (error: any) {
+    return sendResponse(res, 400, false, error);
+  }
+});
+
 export const authController = router;

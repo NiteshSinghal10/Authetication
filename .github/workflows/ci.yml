@@ -23,6 +23,15 @@ jobs:
       - name: Run build
         run: npm run build
 
+      - name: Copy package.json to dist
+        run: cp package.json ./dist/package.json
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifact
+          path: ./dist
+
   deploy:
     name: Deploy to server
     runs-on: ubuntu-latest
@@ -38,6 +47,12 @@ jobs:
           echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/key/mykey.pem
           chmod 600 ~/key/mykey.pem
 
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifact
+          path: ./dist
+
       - name: Run deployment
         env:
           ENV_FILE: ${{ vars.ENV_FILE }}
@@ -45,6 +60,8 @@ jobs:
           echo "$ENV_FILE" > /tmp/env_content
 
           scp -i ~/key/mykey.pem -o StrictHostKeyChecking=no /tmp/env_content ec2-user@api.truewaysindia.com:/tmp/.env.tmp
+
+          scp -r -i ~/key/mykey.pem -o StrictHostKeyChecking=no ./dist/* ec2-user@api.truewaysindia.com:/tmp/dist/
 
           ssh -i ~/key/mykey.pem -o StrictHostKeyChecking=no ec2-user@api.truewaysindia.com << 'EOF'
 
@@ -60,27 +77,14 @@ jobs:
             echo "Checking pwd:"
             pwd
 
-            echo "Checking out staging branch..."
-            git checkout staging
-            git pull origin staging
-
-            echo "Installing dependencies..."
-            npm i
-
-            echo "Removing Old Dist"
-            rm -r dist
-
-            echo "Building project..."
-            npm run build
-
-            echo "Copy Package json"
-            cp package.json ./dist/
-
-            echo "Going to dist"
-            cd dist
+            echo "Copy dist"
+            cp -r /tmp/dist/* ./
 
             echo "Moving .env file from tmp"
             mv /tmp/.env.tmp .env
+
+            echo "Installing dependencies..."
+            npm i
 
             echo "Reloading PM2..."
             npx pm2 reload authentication
