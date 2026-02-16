@@ -31,6 +31,7 @@ jobs:
         with:
           name: build-artifact
           path: ./dist
+          retention-days: 1
 
   deploy:
     name: Deploy to server
@@ -57,31 +58,13 @@ jobs:
         env:
           ENV_FILE: ${{ vars.ENV_FILE }}
         run: |
-          echo "$ENV_FILE" > /tmp/env_content
+          scp -i ~/key/mykey.pem -o StrictHostKeyChecking=no "$ENV_FILE" ec2-user@api.truewaysindia.com:/home/ec2-user/Desktop/vibely/backend/Authentication/.env
 
-          scp -i ~/key/mykey.pem -o StrictHostKeyChecking=no /tmp/env_content ec2-user@api.truewaysindia.com:/tmp/.env.tmp
-
-          scp -r -i ~/key/mykey.pem -o StrictHostKeyChecking=no ./dist/* ec2-user@api.truewaysindia.com:/tmp/dist/
+          scp -r -i ~/key/mykey.pem -o StrictHostKeyChecking=no ./dist/* ec2-user@api.truewaysindia.com:/home/ec2-user/Desktop/vibely/backend/Authentication/
 
           ssh -i ~/key/mykey.pem -o StrictHostKeyChecking=no ec2-user@api.truewaysindia.com << 'EOF'
-
-            echo "Current directory check:"
-            pwd
-            
-            echo "Source Bash"
-            source ~/.bashrc
-
             echo "Changing directory..."
             cd Desktop/vibely/backend/Authentication
-
-            echo "Checking pwd:"
-            pwd
-
-            echo "Copy dist"
-            cp -r /tmp/dist/* ./
-
-            echo "Moving .env file from tmp"
-            mv /tmp/.env.tmp .env
 
             echo "Installing dependencies..."
             npm i
