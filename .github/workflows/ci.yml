@@ -72,7 +72,7 @@ jobs:
             source ~/.bashrc
 
             echo "Changing directory..."
-            cd Desktop/vibely/backend/Authetication
+            cd Desktop/vibely/backend/Authentication
 
             echo "Checking pwd:"
             pwd
