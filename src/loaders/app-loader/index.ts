@@ -20,6 +20,7 @@ function corsCheck(
   const allowedOrigins = [
     'http://localhost:4200',
     'http://localhost:4300',
+    'https://auth.vib3ly.shop',
     FRONTEND_DOMAIN,
   ];
 
