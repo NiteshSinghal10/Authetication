@@ -32,3 +32,4 @@ export const ACCESS_TOKEN_EXPIRED_IN = Number(
 
 export const FRONTEND_DOMAIN = String(process.env.FRONTEND_DOMAIN);
 export const VIBELY_BACKEND_URL = String(process.env.VIBELY_BACKEND_URL);
+export const AUTH_DOMAIN = String(process.env.AUTH_DOMAIN);

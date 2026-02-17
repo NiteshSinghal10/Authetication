@@ -3,7 +3,7 @@ import morgan from 'morgan';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 
-import { FRONTEND_DOMAIN, PORT } from '../../lib';
+import { FRONTEND_DOMAIN, PORT, AUTH_DOMAIN } from '../../lib';
 import router from '../../router';
 
 const app = express();
@@ -20,7 +20,7 @@ function corsCheck(
   const allowedOrigins = [
     'http://localhost:4200',
     'http://localhost:4300',
-    'https://auth.vib3ly.shop',
+    AUTH_DOMAIN,
     FRONTEND_DOMAIN,
   ];
 
